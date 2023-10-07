@@ -4,12 +4,9 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const CustAdd = () => {
   const [customer, setCustomer] = useState({
-    store_id: 1,
     first_name: '',
     last_name: '',
     email: '',
-    address: '', // Add the "address" field
-    address_id: 1,
   });
 
 
@@ -30,7 +27,7 @@ const CustAdd = () => {
       const newCustomerId = response.data.customerId;
       
       // After successfully adding the customer, navigate to the customer IDs page with the new customer ID
-      navigate(`/customer-ids/${newCustomerId}`); // Replace '/customer-ids' with the actual URL of your customer IDs page
+      navigate(`/customer/${newCustomerId}`); // Replace '/customer-ids' with the actual URL of your customer IDs page
     } catch (err) {
       console.log(err);
     }
@@ -70,14 +67,7 @@ const CustAdd = () => {
           value={customer.email}
           onChange={handleInputChange}
         />
-        <input
-          type="text" // Use an appropriate input type (text, textarea, etc.) for the address
-          name="address"
-          placeholder="Address" // Update the placeholder text
-          value={customer.address}
-          onChange={handleInputChange}
-        />
-        {/* You can add more input fields for other customer details here */}
+        
         <button type="submit">Add Customer</button>
       </form>
     </div>

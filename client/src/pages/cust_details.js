@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const CustomerDetails = () => {
   const { customerId } = useParams();
+  const navigate = useNavigate();
   const [customer, setCustomer] = useState({});
   const [rentedMovies, setRentedMovies] = useState([]);
 
@@ -24,6 +25,29 @@ const CustomerDetails = () => {
     fetchCustomerDetails();
   }, [customerId]);
 
+  const handleDeleteCustomer = async () => {
+    try {
+      // Send a request to delete the customer by customer ID
+      await axios.delete(`http://localhost:4000/customers/${customerId}`);
+      // Redirect back to the customer list page after deletion
+      navigate('/customers'); // Use a relative path, not the full URL
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleReturnMovie = async (movieId) => {
+    try {
+      // Send a request to return the rented movie
+      await axios.put(`http://localhost:4000/customers/${customerId}/return-movie/${movieId}`);
+      // After successfully returning the movie, fetch the updated list of rented movies
+      const rentedMoviesResponse = await axios.get(`http://localhost:4000/customers/${customerId}`);
+      setRentedMovies(rentedMoviesResponse.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       <h1>Customer Details</h1>
@@ -42,9 +66,11 @@ const CustomerDetails = () => {
           {rentedMovies.map((movie) => (
             <li key={movie.movie_id}>
               {movie.title}
+              <button onClick={() => handleReturnMovie(movie.film_id)}>Return</button>
             </li>
           ))}
         </ul>
+        <button onClick={handleDeleteCustomer}>Delete Customer</button>
         <button><Link to="/customers">Back to Customer List</Link></button>
       </div>
     </div>
