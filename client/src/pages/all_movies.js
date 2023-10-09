@@ -6,6 +6,9 @@ const MoviesList = () => {
   const [movies, setMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredMovies, setFilteredMovies] = useState([]);
+  const [showRentDialog, setShowRentDialog] = useState(false); // State to control the rent dialog
+  const [selectedMovieId, setSelectedMovieId] = useState(null); // State to store the selected movie ID
+  const [customerID, setCustomerID] = useState(''); // State to store the customer ID entered by the user
 
   useEffect(() => {
     // Fetch movies from your API
@@ -35,10 +38,24 @@ const MoviesList = () => {
     setFilteredMovies(filtered);
   };
 
-  const rentMovie = (movieId) => {
+  const openRentDialog = (movieId) => {
+    setSelectedMovieId(movieId);
+    setShowRentDialog(true);
+  };
+
+  const closeRentDialog = () => {
+    setSelectedMovieId(null);
+    setShowRentDialog(false);
+    setCustomerID(''); // Clear the customer ID input
+  };
+
+  const rentMovie = () => {
     // Implement the logic to rent a movie to a customer
     // This may involve additional API calls and state management
-    console.log(`Renting movie with ID ${movieId} to customer`);
+    console.log(`Renting movie with ID ${selectedMovieId} to customer with ID ${customerID}`);
+
+    // Close the rent dialog after handling the rental
+    closeRentDialog();
   };
 
   return (
@@ -69,12 +86,12 @@ const MoviesList = () => {
           {filteredMovies.map((movie) => (
             <tr key={movie.film_id}>
               <td>
-              <Link to={`/movie/${movie.film_id}`}>{movie.title}</Link>
+                <Link to={`/movie/${movie.film_id}`}>{movie.title}</Link>
               </td>
               <td>{movie.genre}</td>
               <td>{movie.actors}</td>
               <td>
-                <button onClick={() => rentMovie(movie.film_id)}>
+                <button onClick={() => openRentDialog(movie.film_id)}>
                   Rent
                 </button>
               </td>
@@ -82,6 +99,24 @@ const MoviesList = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Rent Dialog */}
+      {showRentDialog && (
+        <div className="rent-dialog">
+          <h2>Rent Movie</h2>
+          <p>Enter Customer ID:</p>
+          <input
+            type="text"
+            placeholder="Customer ID"
+            value={customerID}
+            onChange={(e) => setCustomerID(e.target.value)}
+          />
+          <div className="rent-dialog-buttons">
+            <button onClick={rentMovie}>Rent</button>
+            <button onClick={closeRentDialog}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
