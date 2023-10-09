@@ -36,7 +36,7 @@ const CustomerDetails = () => {
       // Send a request to delete the customer by customer ID
       await axios.delete(`http://localhost:4000/customers/${customerId}`);
       // Redirect back to the customer list page after deletion
-      navigate('/customers'); // Use a relative path, not the full URL
+      navigate('/customers'); 
     } catch (err) {
       console.log(err);
     }
@@ -51,15 +51,9 @@ const CustomerDetails = () => {
       // Send a request to return the rented movie
       await axios.put(`http://localhost:4000/customers/${customerId}/return-movie/${movieId}`);
       
-      // After successfully returning the movie, fetch the updated list of rented movies
-      const rentedMoviesResponse = await axios.get(`http://localhost:4000/customers/${customerId}`);
-  
-      // Check if the data is retrieved successfully
-      if (rentedMoviesResponse.data) {
-        navigate(`/customers/${customerId}`);
-      } else {
-        console.error('Failed to fetch updated rented movies data.');
-      }
+
+      navigate(`/customers`);
+      
     } catch (err) {
       console.error(err);
     }
