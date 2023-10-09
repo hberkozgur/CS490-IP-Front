@@ -42,17 +42,30 @@ const CustomerDetails = () => {
     }
   };
 
-  const handleReturnMovie = async (movieId) => {
+  const handleReturnMovie = async (customerId, movieId) => {
+  
     try {
+      console.log('customerId:', customerId);
+      console.log('movieId:', movieId);
+  
       // Send a request to return the rented movie
       await axios.put(`http://localhost:4000/customers/${customerId}/return-movie/${movieId}`);
+      
       // After successfully returning the movie, fetch the updated list of rented movies
       const rentedMoviesResponse = await axios.get(`http://localhost:4000/customers/${customerId}`);
-      setRentedMovies(rentedMoviesResponse.data);
+  
+      // Check if the data is retrieved successfully
+      if (rentedMoviesResponse.data) {
+        navigate(`/customers/${customerId}`);
+      } else {
+        console.error('Failed to fetch updated rented movies data.');
+      }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
+  
+  
 
   const handleEditCustomer = () => {
     setEditMode(true); // Enter edit mode
@@ -148,12 +161,13 @@ const CustomerDetails = () => {
         )}
         <h3>Rented Movies:</h3>
         <ul>
-          {rentedMovies.map((movie) => (
-            <li key={movie.movie_id}>
-              {movie.title}
-              <button onClick={() => handleReturnMovie(movie.film_id)}>Return</button>
-            </li>
-          ))}
+                {rentedMovies.map((movie) => (
+          <li key={movie.film_id}>
+            {movie.title}
+            <button onClick={() => handleReturnMovie(customerId, movie.film_id)}>Return</button>
+          </li>
+        ))}
+
         </ul>
         {editMode ? null : (
           <button onClick={handleDeleteCustomer}>Delete Customer</button>

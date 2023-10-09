@@ -9,6 +9,7 @@ const MoviesList = () => {
   const [showRentDialog, setShowRentDialog] = useState(false); // State to control the rent dialog
   const [selectedMovieId, setSelectedMovieId] = useState(null); // State to store the selected movie ID
   const [customerID, setCustomerID] = useState(''); // State to store the customer ID entered by the user
+  const [staffId, setStaffId] = useState(''); // State to store staff ID
 
   useEffect(() => {
     // Fetch movies from your API
@@ -46,16 +47,31 @@ const MoviesList = () => {
   const closeRentDialog = () => {
     setSelectedMovieId(null);
     setShowRentDialog(false);
-    setCustomerID(''); // Clear the customer ID input
+    setCustomerID('');
+    setStaffId('');
   };
 
-  const rentMovie = () => {
-    // Implement the logic to rent a movie to a customer
-    // This may involve additional API calls and state management
-    console.log(`Renting movie with ID ${selectedMovieId} to customer with ID ${customerID}`);
+  const handleRentMovie = async (e) => {
+    e.preventDefault();
 
-    // Close the rent dialog after handling the rental
-    closeRentDialog();
+    try {
+      const data = {
+        movieId: selectedMovieId,
+        customerId: customerID,
+        staffId: staffId
+      };
+
+      const response = await axios.post('http://localhost:4000/new_rent', data);
+
+      if (response.status === 200) {
+        console.log(`Successfully rented movie with ID ${selectedMovieId} to customer with ID ${customerID}`);
+        closeRentDialog();
+      } else {
+        console.error(`Error renting movie: ${response.data.error}`);
+      }
+    } catch (error) {
+      console.error('Error renting movie:', error);
+    }
   };
 
   return (
@@ -104,17 +120,30 @@ const MoviesList = () => {
       {showRentDialog && (
         <div className="rent-dialog">
           <h2>Rent Movie</h2>
-          <p>Enter Customer ID:</p>
-          <input
-            type="text"
-            placeholder="Customer ID"
-            value={customerID}
-            onChange={(e) => setCustomerID(e.target.value)}
-          />
-          <div className="rent-dialog-buttons">
-            <button onClick={rentMovie}>Rent</button>
-            <button onClick={closeRentDialog}>Cancel</button>
-          </div>
+          <form onSubmit={handleRentMovie}>
+            <label htmlFor="customerId">Customer ID:</label>
+            <input
+              type="text"
+              id="customerId"
+              name="customerId"
+              value={customerID}
+              onChange={(e) => setCustomerID(e.target.value)}
+              required
+            />
+            <label htmlFor="staffId">Staff ID:</label>
+            <input
+              type="text"
+              id="staffId"
+              name="staffId"
+              value={staffId}
+              onChange={(e) => setStaffId(e.target.value)}
+              required
+            />
+            <div className="rent-dialog-buttons">
+              <button type="submit">Rent</button>
+              <button onClick={closeRentDialog}>Cancel</button>
+            </div>
+          </form>
         </div>
       )}
     </div>

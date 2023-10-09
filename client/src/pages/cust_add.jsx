@@ -27,7 +27,7 @@ const CustAdd = () => {
       const newCustomerId = response.data.customerId;
       
       // After successfully adding the customer, navigate to the customer IDs page with the new customer ID
-      navigate(`/customer/${newCustomerId}`); // Replace '/customer-ids' with the actual URL of your customer IDs page
+      navigate(`/customer/${newCustomerId}`); 
     } catch (err) {
       console.log(err);
     }
