@@ -90,7 +90,6 @@ const CustomerList = () => {
               </td>
               <td>{customer.first_name}</td>
               <td>{customer.last_name}</td>
-              {/* Display other customer data here */}
             </tr>
           ))}
         </tbody>
